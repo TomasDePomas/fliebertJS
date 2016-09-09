@@ -3,35 +3,36 @@
  * Using: PhpStorm
  * On: 28-8-16 - 19:07
  */
-Mob = function (properties) {
-    this.properties = _.extend({
-        x: 0,
-        y: 0,
-        mass: 1
-    }, properties);
 
-    this.world = null;
-    this.location = new Vector(this.properties.x, this.properties.y);
-    this.velocity = new Vector(0, 0);
-    this.acceleration = new Vector(0, 0);
-};
+class Mob {
+    constructor(properties) {
+        this.properties = _.extend({
+            x: 0,
+            y: 0,
+            mass: 1
+        }, properties);
 
-Mob.prototype = {
-    _addTo: function (world) {
+        this.world = null;
+        this.location = new Vector(this.properties.x, this.properties.y);
+        this.velocity = new Vector(0, 0);
+        this.acceleration = new Vector(0, 0);
+    }
+
+    _addTo(world) {
         this.world = world;
         return this;
-    },
+    }
 
-    update: function () {
+    update() {
         this.updatePosition();
 
         if (this.getScene()) {
             this.draw();
         }
         return this;
-    },
+    }
 
-    draw: function () {
+    draw() {
         var scene = this.getScene();
         scene.beginPath();
         scene.arc(this.getX(), this.getY(), this.getMass(), 0, 2 * Math.PI);
@@ -44,52 +45,52 @@ Mob.prototype = {
         scene.stroke();
 
         return this;
-    },
+    }
 
-    updatePosition: function () {
+    updatePosition() {
         this.velocity.add(this.acceleration);
         this.velocity.limit(4);
 
         this.location.add(this.velocity);
         this.acceleration.multiply(0);
         return this;
-    },
+    }
 
-    applyForce: function (force) {
+    applyForce(force) {
         this.acceleration.add(force);
         return this;
-    },
+    }
 
-    getScene: function () {
+    getScene() {
         return _.isNull(this.properties.world) ?
             false : this.world.isRendering() ?
             this.world.getScene() : false;
-    },
+    }
 
-    getMass: function () {
+    getMass() {
         return this.properties.mass;
-    },
+    }
 
-    setMass: function (value) {
+    setMass(value) {
         this.properties.mass = value;
         return this;
-    },
+    }
 
-    getY: function () {
+    getY() {
         return this.location.getY();
-    },
+    }
 
-    setY: function (value) {
+    setY(value) {
         this.location.setY(value);
         return this;
-    },
+    }
 
-    getX: function () {
+    getX() {
         return this.location.getX();
-    },
+    }
 
-    setX: function (value) {
+    setX(value) {
         this.location.setX(value);
         return this;
     }
-};
+}

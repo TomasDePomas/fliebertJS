@@ -4,37 +4,37 @@
  * On: 28-8-16 - 22:43
  */
 
-Vector = function (x, y) {
-    if (_.isObject(x)) {
-        this.properties = x;
-    } else {
-        this.properties = {
-            x: x,
-            y: y
-        };
+class Vector {
+    constructor(x, y) {
+        if (_.isObject(x)) {
+            this.properties = x;
+        } else {
+            this.properties = {
+                x: x,
+                y: y
+            };
+        }
     }
-};
 
-Vector.prototype = {
-    setX: function (value) {
+    setX(value) {
         this.properties.x = value;
         return this;
-    },
+    }
 
-    getX: function () {
+    getX() {
         return this.properties.x;
-    },
+    }
 
-    setY: function (value) {
+    setY(value) {
         this.properties.y = value;
         return this;
-    },
+    }
 
-    getY: function () {
+    getY() {
         return this.properties.y;
-    },
+    }
 
-    setDirection: function (angle, isRadians) {
+    setDirection(angle, isRadians) {
         var hypotenuse = this.getMagnitude();
         this.setX(hypotenuse *
             Math.cos(isRadians ? angle : this.angleToRadians(angle)));
@@ -42,9 +42,9 @@ Vector.prototype = {
             Math.sin(isRadians ? angle : this.angleToRadians(angle)));
 
         return this;
-    },
+    }
 
-    getDirection: function (inRadians) {
+    getDirection(inRadians) {
         var radians = this.getAngle(true);
 
         if (this.getY() < 0) {
@@ -57,13 +57,13 @@ Vector.prototype = {
             return inRadians ? Math.PI + radians : this.radiansToAngle(Math.PI + radians);
         }
         return inRadians ? 2 * Math.PI - radians : this.radiansToAngle(2 * Math.PI - radians);
-    },
-    getAngle: function (inRadians) {
+    }
+    getAngle(inRadians) {
         var radians = Math.atan(Math.abs(this.getY()) / (Math.abs(this.getX())));
         return inRadians ? radians : this.radiansToAngle(radians);
-    },
+    }
 
-    setMagnitude: function (hypotenuse) {
+    setMagnitude(hypotenuse) {
         var radians = this.getAngle(true);
         var direction = this.getDirection();
         var adjacent = hypotenuse * Math.cos(radians);
@@ -89,24 +89,24 @@ Vector.prototype = {
         this.setX(adjacent);
         this.setY(oposite);
         return this;
-    },
+    }
 
-    getMagnitude: function () {
+    getMagnitude() {
         return Math.sqrt(
             Math.pow(this.getX(), 2) + Math.pow(this.getY(), 2)
         );
-    },
+    }
 
-    add: function (vector) {
+    add(vector) {
         return this.setX(this.getX() + vector.getX())
             .setY(this.getY() + vector.getY());
-    },
+    }
 
-    subtract: function (vector) {
+    subtract(vector) {
         return this.add(vector.clone().revert());
-    },
+    }
 
-    multiply: function (multiplier) {
+    multiply(multiplier) {
         if (_.isNumber(multiplier)) {
             this.setX(this.getX() * multiplier);
             this.setY(this.getY() * multiplier);
@@ -114,9 +114,9 @@ Vector.prototype = {
             console.warn('Mulitplication between two vectors is not supported');
         }
         return this;
-    },
+    }
 
-    divide: function (divider) {
+    divide(divider) {
         if (_.isNumber(divider)) {
             this.setX(this.getX() / divider);
             this.setY(this.getY() / divider);
@@ -124,47 +124,48 @@ Vector.prototype = {
             console.warn('Division between two vectors is not supported');
         }
         return this;
-    },
+    }
 
-    revert: function () {
+    revert() {
         return this.setX(-this.getX())
             .setY(-this.getY());
-    },
+    }
 
-    normalize: function () {
+    normalize() {
         return this.limit(1);
 
-    },
-    limit: function (amount) {
+    }
+    limit(amount) {
         if (this.getMagnitude() > amount) {
             return this.setMagnitude(amount);
         }
         return this;
-    },
+    }
 
-    clone: function () {
+    clone() {
         return new Vector(this.getX(), this.getY());
-    },
+    }
 
-    cartesian: function () {
+    cartesian() {
         return {
             x: this.getX(),
             y: this.getY()
         };
-    },
+    }
 
-    polar: function () {
+    polar() {
         return {
             r: this.getMagnitude(),
             t: this.getDirection()
         };
-    },
+    }
 
-    angleToRadians: function (value) {
+    angleToRadians(value) {
         return value * (Math.PI / 180);
-    },
+    }
 
-    radiansToAngle: function (value) {
+    radiansToAngle(value) {
         return value * (180 / Math.PI);
     }
-};
+}
+;

@@ -1,6 +1,7 @@
 var gulp = require('gulp'),
     sass = require('gulp-sass'),
     minify = require('gulp-minify'),
+    babel = require('gulp-babel'),
     minifyCSS = require('gulp-minify-css'),
     concat = require('gulp-concat'),
     livereload = require('gulp-livereload');
@@ -8,9 +9,13 @@ var gulp = require('gulp'),
 gulp.task('default', function () {
     gulp.src([
             'resources/js/Support/*.js',
-            'resources/js/*.js',
+            'resources/js/Core/*.js',
             'resources/js/WorldObjects/*.js',
+            'resources/js/*.js'
         ])
+        .pipe(babel({
+            presets: ['es2015']
+        }))
         .pipe(concat('simulation.js'))
         .pipe(minify())
         .pipe(gulp.dest('assets/js/'))

@@ -3,77 +3,81 @@
  * Using: PhpStorm
  * On: 28-8-16 - 19:07
  */
-World = function (selector, properties) {
-    if (!_.isString(selector)) {
-        properties = selector;
-        selector = false;
-    }
-
-    this.timer = false;
-    this.rendering = false;
-    this.wraps = false;
-    this.currentTime = 0;
-    this.objects = [];
-    this.tickCallbacks = [];
-
-    if (selector) {
-
-        this.el = document.querySelector(selector);
-
-        if (this.el.tagName != "CANVAS") {
-            throw "Invalid world selector";
+class World {
+    constructor(selector, properties) {
+        if (!_.isString(selector)) {
+            properties = selector;
+            selector = false;
         }
-        this.rendering = true;
 
-    } else if (!properties.width || !properties.height) {
-        throw "World dimensions reqired if no element is provided.";
+        this.timer = false;
+        this.rendering = false;
+        this.wraps = false;
+        this.currentTime = 0;
+        this.objects = [];
+        this.tickCallbacks = [];
+
+        if (selector) {
+            this.el = document.querySelector(selector);
+
+            if (this.el.tagName != "CANVAS") {
+                throw "Invalid world selector";
+            }
+            this.rendering = true;
+
+        } else if (!properties.width || !properties.height) {
+            throw "World dimensions reqired if no element is provided.";
+        }
+
+        this.properties = _.extend({
+            width: selector ? this.el.offsetWidth : 0,
+            height: selector ? this.el.offsetHeight : 0,
+            tickLength: 10
+        }, properties);
+
+        this.scene = this.el.getContext('2d');
+
     }
 
-    this.properties = _.extend({
-        width: selector ? this.el.offsetWidth : 0,
-        height: selector ? this.el.offsetHeight : 0,
-        tickLength: 10
-    }, properties);
-
-    this.scene = this.el.getContext('2d');
-
-};
-
-World.prototype = {
-    getWidth: function () {
+    getWidth() {
         return this.properties.width;
-    },
-    getHeight: function () {
+    }
+
+    getHeight() {
         return this.properties.height;
-    },
-    getCurrentTime: function () {
+    }
+
+    getCurrentTime() {
         return this.properties.currentTime;
-    },
-    setCurrentTime: function (value) {
+    }
+
+    setCurrentTime(value) {
         this.properties.currentTime = value;
         return this;
-    },
-    getTickLength: function () {
+    }
+
+    getTickLength() {
         return this.properties.tickLength;
-    },
-    setTickLength: function (value) {
+    }
+
+    setTickLength(value) {
         this.pauseSimulation();
         this.properties.tickLength = value;
         this.startSimulation();
         return this;
-    },
+    }
 
-    add: function (object) {
+    add(object) {
         object._addTo(this);
         this.objects.push(object);
         return this;
-    },
+    }
 
-    getObjects: function () {
+    getObjects() {
         return this.objects;
-    },
+    }
 
-    startSimulation: function () {
+    startSimulation() {
         if (!this.timer) {
             var self = this;
             this.timer = setInterval(function () {
@@ -81,23 +85,23 @@ World.prototype = {
             }, this.getTickLength());
         }
         return this;
-    },
+    }
 
-    pauseSimulation: function () {
+    pauseSimulation() {
         if (this.timer) {
             clearInterval(this.timer);
             this.timer = false;
         }
         return this;
-    },
+    }
 
-    stopSimulation: function () {
+    stopSimulation() {
         this.pauseSimulation();
         this.setCurrentTime(0);
         return this;
-    },
+    }
 
-    flipObject: function (object) {
+    flipObject(object) {
         if (object.getX() > this.getWidth()) {
             object.setX(0);
         }
@@ -112,13 +116,14 @@ World.prototype = {
         }
 
         return this;
-    },
+    }
 
-    tick: function () {
+    tick() {
+        var self = this;
         this.clearScene();
         _.each(this.objects, function (object) {
             object.update();
-            if (this.wraps) {
+            if (self.wraps) {
                 this.flipObject(object);
             }
         });
@@ -128,54 +133,58 @@ World.prototype = {
         });
 
         return this;
-    },
+    }
 
-    isRendering: function () {
+    isRendering() {
         return this.rendering;
-    },
+    }
 
-    startRendering: function () {
+    startRendering() {
         this.rendering = true;
         return this;
-    },
+    }
 
-    stopRendering: function () {
+    stopRendering() {
         this.rendering = false;
         return this;
-    },
+    }
 
-    toggleRendering: function () {
+    toggleRendering() {
         this.rendering = !this.rendering;
         return this;
-    },
+    }
 
-    getScene: function () {
+    getScene() {
         return this.scene;
-    },
-    getCenter: function () {
+    }
+
+    getCenter() {
         return {
             x: Math.floor(this.getWidth() / 2),
             y: Math.floor(this.getHeight() / 2)
         };
-    },
-    getRandomPosition: function () {
+    }
+
+    getRandomPosition() {
         return {
             x: Math.floor(Math.random() * this.getWidth()),
             y: Math.floor(Math.random() * this.getHeight())
 
         }
-    },
-    onTick: function (callback) {
+    }
+
+    onTick(callback) {
         this.tickCallbacks.push(callback);
         return this;
-    },
-    clearOnTick: function () {
+    }
+
+    clearOnTick() {
         this.tickCallbacks = [];
         return this;
-    },
+    }
 
-    clearScene: function () {
+    clearScene() {
         this.scene.clearRect(0, 0, this.getWidth(), this.getHeight());
         return this;
     }
-};
+}

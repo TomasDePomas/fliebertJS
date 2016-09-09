@@ -10,5 +10,43 @@
 
         <canvas id="world" width="670" height="410"></canvas>
         <script src="/assets/js/simulation-min.js"></script>
+
+        <script>
+            window.onload = function () {
+                var w = new World('#world', {
+                    stepSize: 50
+                });
+
+                for (var i = 0; i < 10000; i++) {
+                    var mob = new Mob(w.getRandomPosition());
+                    mob.applyForce(new Vector(Math.random() * 4 - 2, Math.random() * 4 - 2));
+                    w.add(mob);
+                }
+
+                w.startSimulation();
+
+                var center = new Vector(w.getCenter());
+                w.onTick(function () {
+                    _.each(w.getObjects(), function (object) {
+                        var force = center.clone()
+                                .subtract(object.location)
+                                .divide(2000);
+
+                        object.applyForce(force);
+                    });
+                });
+
+                w.el.onmousedown = function (e) {
+                    var clickVector = new Vector(e.offsetX, e.offsetY);
+                    _.each(w.getObjects(), function (object) {
+                        var force = clickVector.clone()
+                                .subtract(object.location)
+                                .divide(200);
+
+                        object.applyForce(force);
+                    });
+                };
+            };
+        </script>
     </body>
 </html>
