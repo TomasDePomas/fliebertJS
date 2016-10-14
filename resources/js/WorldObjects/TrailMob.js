@@ -3,8 +3,9 @@
  * Using: PhpStorm
  * On: 28-8-16 - 19:07
  */
+import WorldObject from '../Core/WorldObject'
 
-class TrailMob extends WorldObject {
+export default class TrailMob extends WorldObject {
 
     constructor(properties) {
         super(properties);

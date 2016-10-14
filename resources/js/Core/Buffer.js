@@ -4,12 +4,13 @@
  * On: 9-10-16 - 0:27
  */
 
-class Buffer {
+export default class Buffer {
     constructor(properties) {
 
         this._buffer = [];
 
-        this._properties = _.extend({}, properties);
+        this._properties = Object.assign({}, properties);
+
     }
 
     set(tick, data) {
@@ -21,19 +22,15 @@ class Buffer {
         return this._buffer[tick] || [];
     }
 
-    getLastTick(){
+    getLastTick() {
         return this._buffer.length - 1;
     }
 
-    getSize(){
+    getSize() {
         return this._buffer.length
     }
 
-    last(){
-        return _.last(this._buffer);
-    }
-
-    clear(){
+    clear() {
         this._buffer = [];
         return this;
     }

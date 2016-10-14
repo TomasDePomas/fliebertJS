@@ -3,12 +3,14 @@
  * Using: PhpStorm
  * On: 28-8-16 - 19:07
  */
-class World {
+import Grid from '../Support/Grid'
+
+export default class World {
     constructor(properties) {
 
         this._objects = [];
 
-        this._properties = _.extend({
+        this._properties = Object.assign({
             width: 500,
             height: 500,
             wraps: false

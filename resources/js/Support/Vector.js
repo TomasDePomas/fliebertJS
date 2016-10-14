@@ -4,9 +4,9 @@
  * On: 28-8-16 - 22:43
  */
 
-class Vector {
+export default class Vector {
     constructor(x, y) {
-        if (_.isObject(x)) {
+        if (typeof x == 'object') {
             this._properties = x;
         } else {
             this._properties = {
@@ -108,22 +108,16 @@ class Vector {
     }
 
     multiply(multiplier) {
-        if (_.isNumber(multiplier)) {
-            this.setX(this.getX() * multiplier);
-            this.setY(this.getY() * multiplier);
-        } else {
-            console.warn('Mulitplication between two vectors is not supported');
-        }
+        this.setX(this.getX() * multiplier);
+        this.setY(this.getY() * multiplier);
+
         return this;
     }
 
     divide(divider) {
-        if (_.isNumber(divider)) {
-            this.setX(this.getX() / divider);
-            this.setY(this.getY() / divider);
-        } else {
-            console.warn('Division between two vectors is not supported');
-        }
+        this.setX(this.getX() / divider);
+        this.setY(this.getY() / divider);
+
         return this;
     }
 

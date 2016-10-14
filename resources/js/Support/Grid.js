@@ -4,10 +4,10 @@
  * On: 11-9-16 - 17:35
  */
 
-class Grid {
+export default class Grid {
     constructor(properties) {
 
-        this._properties = _.extend({
+        this._properties = Object.assign({
             width: 200,
             height: 200,
             tileSize: 50
@@ -39,13 +39,13 @@ class Grid {
         this._objects[id] = newBuckets;
 
         oldBuckets.forEach(function (bucket) {
-            if (!_.contains(newBuckets, bucket)) {
+            if (!newBuckets.includes(bucket)) {
                 delete this._buckets[bucket][id];
             }
         }.bind(this));
 
         newBuckets.forEach(function (bucket) {
-            if (!_.contains(oldBuckets, bucket)) {
+            if (!oldBuckets.includes(bucket)) {
                 this._buckets[bucket][id] = worldObject;
             }
         }.bind(this));
@@ -90,11 +90,14 @@ class Grid {
             objects = objects.concat(this._getBucketContent(hash));
         }.bind(this));
 
-        return _.unique(objects);
+        // ONLY UNIQUE OBJECTS
+        return objects.filter(function(key, index, array){
+            return array.indexOf(key) === index;
+        });
     }
 
     _getBucketContent(hash) {
-        return this._buckets[hash] ? _.values(this._buckets[hash]) : [];
+        return this._buckets[hash] ? Object.values(this._buckets[hash]) : [];
     }
 
     _getBucketsInBox(box, append = false) {

@@ -3,11 +3,12 @@
  * Using: PhpStorm
  * On: 9-9-16 - 16:40
  */
+import WorldObject from '../Core/WorldObject'
 
-class Mob extends WorldObject {
+export default class Mob extends WorldObject {
 
     constructor(properties) {
-        super(_.extend({
+        super(Object.assign({
 
         }, properties));
 
@@ -23,8 +24,6 @@ class Mob extends WorldObject {
 
     observe() {
         const grid = this._world.getGrid();
-
-
     }
 
 }

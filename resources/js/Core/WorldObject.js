@@ -3,10 +3,11 @@
  * Using: PhpStorm
  * On: 9-9-16 - 16:16
  */
+import Vector from '../Support/Vector';
 
-class WorldObject {
+export default class WorldObject {
     constructor(properties) {
-        this._properties = _.extend({
+        this._properties = Object.assign({
             x: 0,
             y: 0,
             size: 1

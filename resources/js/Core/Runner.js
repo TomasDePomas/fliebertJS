@@ -3,8 +3,9 @@
  * Using: PhpStorm
  * On: 8-10-16 - 16:59
  */
+import Buffer from './Buffer';
 
-class Runner {
+export default class Runner {
     constructor(properties) {
 
         this._currentTick = 0;
@@ -13,7 +14,7 @@ class Runner {
         this._world = null;
         this._buffer = new Buffer();
 
-        this._properties = _.extend({
+        this._properties = Object.assign({
             speed: 1  // Step the simulation takes per tick in seconds
         }, properties);
     }
@@ -50,7 +51,7 @@ class Runner {
         this._currentTick++;
 
         if (this.isContinuous() || this._currentTick < this._targetTick) {
-            _.defer(this.tick.bind(this));
+            setTimeout(this.tick.bind(this), 0);
         }
 
         return this;

@@ -4,7 +4,7 @@
  * On: 8-10-16 - 17:13
  */
 
-class Renderer {
+export default class Renderer {
     constructor(selector, buffer, properties) {
 
         if (selector) {
@@ -21,7 +21,7 @@ class Renderer {
 
         this._buffer = buffer;
 
-        this._properties = _.extend({
+        this._properties = Object.assign({
             tickRate: 1,
             liveMode: false
         }, properties);
