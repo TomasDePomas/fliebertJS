@@ -5,5 +5,5 @@ That's right, you start building your own Unity/Processing framework tingemejing
 
 
 # Todo:
-~~1. Think of a better name~~
+1. ~~Think of a better name~~
 2. Write a better Readme
