@@ -7,9 +7,9 @@
 class Vector {
     constructor(x, y) {
         if (_.isObject(x)) {
-            this.properties = x;
+            this._properties = x;
         } else {
-            this.properties = {
+            this._properties = {
                 x: x,
                 y: y
             };
@@ -17,25 +17,25 @@ class Vector {
     }
 
     setX(value) {
-        this.properties.x = value;
+        this._properties.x = value;
         return this;
     }
 
     getX() {
-        return this.properties.x;
+        return this._properties.x;
     }
 
     setY(value) {
-        this.properties.y = value;
+        this._properties.y = value;
         return this;
     }
 
     getY() {
-        return this.properties.y;
+        return this._properties.y;
     }
 
     setDirection(angle, isRadians) {
-        var hypotenuse = this.getMagnitude();
+        const hypotenuse = this.getMagnitude();
         this.setX(hypotenuse *
             Math.cos(isRadians ? angle : this.angleToRadians(angle)));
         this.setY(hypotenuse *
@@ -45,7 +45,7 @@ class Vector {
     }
 
     getDirection(inRadians) {
-        var radians = this.getAngle(true);
+        const radians = this.getAngle(true);
 
         if (this.getY() < 0) {
             if (this.getX() < 0) {
@@ -58,36 +58,37 @@ class Vector {
         }
         return inRadians ? 2 * Math.PI - radians : this.radiansToAngle(2 * Math.PI - radians);
     }
+
     getAngle(inRadians) {
-        var radians = Math.atan(Math.abs(this.getY()) / (Math.abs(this.getX())));
+        const radians = Math.atan(Math.abs(this.getY()) / (Math.abs(this.getX())));
         return inRadians ? radians : this.radiansToAngle(radians);
     }
 
     setMagnitude(hypotenuse) {
-        var radians = this.getAngle(true);
-        var direction = this.getDirection();
-        var adjacent = hypotenuse * Math.cos(radians);
-        var oposite = hypotenuse * Math.sin(radians);
+        const radians = this.getAngle(true);
+        const direction = this.getDirection();
+        const adjacent = hypotenuse * Math.cos(radians);
+        const opposite = hypotenuse * Math.sin(radians);
 
         if (direction < 90) {
             this.setX(adjacent);
-            this.setY(-oposite);
+            this.setY(-opposite);
             return this;
         }
 
         if (direction < 180) {
             this.setX(-adjacent);
-            this.setY(-oposite);
+            this.setY(-opposite);
             return this;
         }
         if (direction < 270) {
             this.setX(-adjacent);
-            this.setY(oposite);
+            this.setY(opposite);
             return this;
         }
 
         this.setX(adjacent);
-        this.setY(oposite);
+        this.setY(opposite);
         return this;
     }
 
@@ -135,6 +136,7 @@ class Vector {
         return this.limit(1);
 
     }
+
     limit(amount) {
         if (this.getMagnitude() > amount) {
             return this.setMagnitude(amount);
@@ -168,4 +170,3 @@ class Vector {
         return value * (180 / Math.PI);
     }
 }
-;

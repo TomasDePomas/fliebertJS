@@ -4,11 +4,13 @@
  * On: 28-8-16 - 19:07
  */
 
-class TrailMob extends WorldObject{
+class TrailMob extends WorldObject {
+
     constructor(properties) {
         super(properties);
 
-        this.acceleration = new Vector(0, 0);
+        this._velocity = new Vector(0, 0);
+        this._acceleration = new Vector(0, 0);
     }
 
     draw() {
@@ -27,16 +29,16 @@ class TrailMob extends WorldObject{
     }
 
     updatePosition() {
-        this.velocity.add(this.acceleration);
-        this.velocity.limit(4);
+        this._velocity.add(this._acceleration);
+        this._velocity.limit(4);
 
-        this.location.add(this.velocity);
-        this.acceleration.multiply(0);
+        this._location.add(this._velocity);
+        this._acceleration.multiply(0);
         return this;
     }
 
     applyForce(force) {
-        this.acceleration.add(force);
+        this._acceleration.add(force);
         return this;
     }
 }

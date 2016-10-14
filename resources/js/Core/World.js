@@ -4,100 +4,28 @@
  * On: 28-8-16 - 19:07
  */
 class World {
-    constructor(selector, properties) {
-        if (!_.isString(selector)) {
-            properties = selector;
-            selector = false;
-        }
+    constructor(properties) {
 
-        this.timer = false;
-        this.rendering = false;
-        this.wraps = false;
-        this.currentTime = 0;
-        this.objects = [];
-        this.tickCallbacks = [];
+        this._objects = [];
 
-        if (selector) {
-            this.el = document.querySelector(selector);
-
-            if (this.el.tagName != "CANVAS") {
-                throw "Invalid world selector";
-            }
-            this.rendering = true;
-
-        } else if (!properties.width || !properties.height) {
-            throw "World dimensions reqired if no element is provided.";
-        }
-
-        this.properties = _.extend({
-            width: selector ? this.el.offsetWidth : 0,
-            height: selector ? this.el.offsetHeight : 0,
-            tickLength: 10
+        this._properties = _.extend({
+            width: 500,
+            height: 500,
+            wraps: false
         }, properties);
 
-        this.scene = this.el.getContext('2d');
-
-    }
-
-    getWidth() {
-        return this.properties.width;
-    }
-
-    getHeight() {
-        return this.properties.height;
-    }
-
-    getCurrentTime() {
-        return this.properties.currentTime;
-    }
-
-    setCurrentTime(value) {
-        this.properties.currentTime = value;
-        return this;
-    }
-
-    getTickLength() {
-        return this.properties.tickLength;
-    }
-
-    setTickLength(value) {
-        this.pauseSimulation();
-        this.properties.tickLength = value;
-        this.startSimulation();
-        return this;
+        this._grid = new Grid({
+            width: this._properties.width,
+            height: this._properties.height,
+            tileSize: 50
+        });
     }
 
     add(object) {
         object._addTo(this);
-        this.objects.push(object);
-        return this;
-    }
+        this._objects.push(object);
+        this.getGrid().add(object);
 
-    getObjects() {
-        return this.objects;
-    }
-
-    startSimulation() {
-        if (!this.timer) {
-            var self = this;
-            this.timer = setInterval(function () {
-                self.tick();
-            }, this.getTickLength());
-        }
-        return this;
-    }
-
-    pauseSimulation() {
-        if (this.timer) {
-            clearInterval(this.timer);
-            this.timer = false;
-        }
-        return this;
-    }
-
-    stopSimulation() {
-        this.pauseSimulation();
-        this.setCurrentTime(0);
         return this;
     }
 
@@ -118,44 +46,42 @@ class World {
         return this;
     }
 
-    tick() {
-        var self = this;
-        this.clearScene();
-        _.each(this.objects, function (object) {
-            object.update();
-            if (self.wraps) {
+    advance(speed) {
+        const bufferData = [];
+
+        this._objects.forEach(function (object) {
+            object.advance(speed);
+
+            if (this._properties.wraps) {
                 this.flipObject(object);
             }
-        });
+            this.getGrid().update(object);
 
-        _.each(this.tickCallbacks, function (callback) {
-            callback(this);
-        });
+            bufferData.push(object.getBufferData());
+        }.bind(this));
 
+        return bufferData;
+    }
+
+    toggleWraps() {
+        this._properties.wraps = !this._properties.wraps;
         return this;
     }
 
-    isRendering() {
-        return this.rendering;
+    getWidth() {
+        return this._properties.width;
     }
 
-    startRendering() {
-        this.rendering = true;
-        return this;
+    getHeight() {
+        return this._properties.height;
     }
 
-    stopRendering() {
-        this.rendering = false;
-        return this;
+    getObjects() {
+        return this._objects;
     }
 
-    toggleRendering() {
-        this.rendering = !this.rendering;
-        return this;
-    }
-
-    getScene() {
-        return this.scene;
+    getGrid() {
+        return this._grid;
     }
 
     getCenter() {
@@ -169,22 +95,7 @@ class World {
         return {
             x: Math.floor(Math.random() * this.getWidth()),
             y: Math.floor(Math.random() * this.getHeight())
-
         }
     }
 
-    onTick(callback) {
-        this.tickCallbacks.push(callback);
-        return this;
-    }
-
-    clearOnTick() {
-        this.tickCallbacks = [];
-        return this;
-    }
-
-    clearScene() {
-        this.scene.clearRect(0, 0, this.getWidth(), this.getHeight());
-        return this;
-    }
 }
