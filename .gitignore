@@ -1,3 +1,6 @@
-assets/*
+app/*
 node_modules
 .idea/
+bower_lib
+serviceAccountCredentials.json
+resources/config.js

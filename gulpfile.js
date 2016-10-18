@@ -1,47 +1,36 @@
 var gulp = require('gulp'),
-    sass = require('gulp-sass'),
     minify = require('gulp-minify'),
     babel = require('gulp-babel'),
-    minifyCSS = require('gulp-minify-css'),
     concat = require('gulp-concat'),
     livereload = require('gulp-livereload');
 
 gulp.task('default', function () {
     gulp.src([
-            'resources/js/Support/*.js',
-            'resources/js/Core/*.js',
-            'resources/js/WorldObjects/*.js',
-            'resources/js/*.js'
+            'resources/connection/Buffer.js',
+            'resources/config.js',
+            'resources/visualizer/*.js'
         ])
         .pipe(babel({
             presets: ['es2015']
         }))
         .pipe(concat('simulation.js'))
-        .pipe(minify())
-        .pipe(gulp.dest('assets/js/'))
+        .pipe(gulp.dest('app/'))
         .pipe(livereload());
 
-    gulp.src('resources/js/lib/**/*min.js')
+    gulp.src(['bower_lib/**/*.js'])
         .pipe(concat('dependencies.js'))
-        .pipe(gulp.dest('assets/js/'))
+        .pipe(gulp.dest('app/'))
         .pipe(livereload());
 
-    gulp.src(['resources/css/**/*.css', 'resources/sass/*.scss'])
-        .pipe(sass())
-        .pipe(minifyCSS())
-        .pipe(concat('style.min.css'))
-        .pipe(gulp.dest('assets/css/'))
+    gulp.src(['resources/index.html'
+        ])
+        .pipe(gulp.dest('app/'))
         .pipe(livereload());
-
-    gulp.src('resources/js/lib/src/**/*')
-        .pipe(gulp.dest('assets/lib/'));
 });
 
 gulp.task('watch', function () {
     livereload.listen();
     gulp.watch([
-        'resources/js/**/*.js',
-        'resources/css/**/*.css',
-        'resources/sass/**/*.scss'
+        'resources/**/*'
     ], ['default']);
 });
