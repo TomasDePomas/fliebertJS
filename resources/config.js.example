@@ -5,9 +5,9 @@
  */
 
 const firebaseConfig = {
-    apiKey: "AIzaSyBNKuN0YY0Aj08pzxKeBkonPBrKn2u0zVI",
-        authDomain: "fliebert-cf931.firebaseapp.com",
-    databaseURL: "https://fliebert-cf931.firebaseio.com",
-    storageBucket: "fliebert-cf931.appspot.com",
-    messagingSenderId: "775115887779"
+    apiKey: "INSERT YOUR FIREBASE CREDENTIALS HERE",
+    authDomain: "INSERT YOUR FIREBASE CREDENTIALS HERE",
+    databaseURL: "INSERT YOUR FIREBASE CREDENTIALS HERE",
+    storageBucket: "INSERT YOUR FIREBASE CREDENTIALS HERE",
+    messagingSenderId: "INSERT YOUR FIREBASE CREDENTIALS HERE"
 };
