@@ -25,5 +25,6 @@ This library runs a node server that simulates elements in your world and stores
 8. Be confused, because this readme does not tell you at all what you just installed..
 
 __Optional__
-9. create a vhost called mobs.dev and point it to the `app/index.html`
-10. instead of `gulp` run `gulp watch`. This wil automatically update the script when you make changes. You know, in case you want to mess around with stuff.
+
+1. create a vhost called mobs.dev and point it to the `app/index.html`
+2. instead of `gulp` run `gulp watch`. This wil automatically update the script when you make changes. You know, in case you want to mess around with stuff.
