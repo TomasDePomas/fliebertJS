@@ -20,9 +20,10 @@ This library runs a node server that simulates elements in your world and stores
 3. Add a `serviceAccountCredentials.json` to the root of the project folder. [Read the official documentation on how to do that](https://firebase.google.com/docs/server/setup),
 4. Add your firebase credentials to a `/resources/config.js`, have a look at `/resources/config.js.example` to see how to set it up.
 5. Run `gulp`
-6. Open the `app/index.html` in your browser.
-7. Be confused, because this readme does not tell you at all what you just installed..
+6. Open the `resources` folder in your terminal and run `node app.js`
+7. Open the `app/index.html` in your browser.
+8. Be confused, because this readme does not tell you at all what you just installed..
 
 __Optional__
-8. create a vhost called mobs.dev and point it to the `app/index.html`
-9. instead of `gulp` run `gulp watch`. This wil automatically update the script when you make changes. You know, in case you want to mess around with stuff.
+9. create a vhost called mobs.dev and point it to the `app/index.html`
+10. instead of `gulp` run `gulp watch`. This wil automatically update the script when you make changes. You know, in case you want to mess around with stuff.
