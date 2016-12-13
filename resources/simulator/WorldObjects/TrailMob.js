@@ -16,6 +16,7 @@ class TrailMob extends WorldObject {
 
         this._velocity = new Vector(0, 0);
         this._acceleration = new Vector(0, 0);
+        this._style = 'trailmob';
     }
 
     draw() {

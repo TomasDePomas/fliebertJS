@@ -8,7 +8,8 @@ gulp.task('default', function () {
     gulp.src([
             'resources/connection/Buffer.js',
             'resources/config.js',
-            'resources/visualizer/*.js'
+            'resources/visualizer/**/*.js',
+            'resources/simulator/Support/Vector.js'
         ])
         .pipe(babel({
             presets: ['es2015']
@@ -22,8 +23,7 @@ gulp.task('default', function () {
         .pipe(gulp.dest('app/'))
         .pipe(livereload());
 
-    gulp.src(['resources/index.html'
-        ])
+    gulp.src(['resources/index.html'])
         .pipe(gulp.dest('app/'))
         .pipe(livereload());
 });
@@ -31,6 +31,6 @@ gulp.task('default', function () {
 gulp.task('watch', function () {
     livereload.listen();
     gulp.watch([
-        'resources/**/*'
+        'resources/visualizer/**/*'
     ], ['default']);
 });

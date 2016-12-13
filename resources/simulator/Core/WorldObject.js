@@ -13,14 +13,16 @@ class WorldObject {
         this._properties = Object.assign({
             x: 0,
             y: 0,
-            size: 1
+            size: 1,
+            id: ("0000" + (Math.random() * Math.pow(36,4) << 0).toString(36)).slice(-4)
         }, properties);
 
-        this._id = ("0000" + (Math.random() * Math.pow(36,4) << 0).toString(36)).slice(-4);
+        this._style = null;
         this._world = null;
         this._buckets = [];
         this._location = new Vector(this._properties.x, this._properties.y);
         this._velocity = new Vector(0, 0);
+        this._lastVelocity = new Vector(null, null);
     }
 
     _addTo(world) {
@@ -29,6 +31,7 @@ class WorldObject {
     }
 
     advance(speed) {
+        this.setLastVelocity(this.getVelocity());
         this.updatePosition(speed);
 
         return this;
@@ -37,6 +40,10 @@ class WorldObject {
     updatePosition(speed) {
         this._location.add(this._velocity);
         return this;
+    }
+
+    hasChanged(){
+        return !this.getVelocity().isEqual(this.getLastVelocity());
     }
 
     getY() {
@@ -75,12 +82,8 @@ class WorldObject {
         return this;
     }
 
-    getClass() {
-        return this.constructor.name;
-    }
-
     getId() {
-        return this._id;
+        return this._properties.id;
     }
 
     getHitBox() {
@@ -100,14 +103,50 @@ class WorldObject {
         this._buckets = buckets;
     }
 
-    getBufferData() {
+    getVelocity() {
+        return this._velocity;
+    }
+
+    setVelocity(vector) {
+        this._velocity = vector;
+        return this;
+    }
+
+    getLastVelocity() {
+        return this._lastVelocity;
+    }
+
+    setLastVelocity(velocity) {
+        this._lastVelocity = velocity.clone();
+    }
+
+    getImprint() {
         return {
-            x: this.getX(),
-            y: this.getY(),
-            size: this.getSize(),
-            class: this.getClass(),
-            id: this.getId()
+            id: this.getId(),
+            type: 'status',
+            style: this.getStyle(),
+            location: {
+                x: this.getLocation().getX(),
+                y: this.getLocation().getY()
+            },
+            velocity: {
+                x: this.getVelocity().getX(),
+                y: this.getVelocity().getY()
+            }
         }
+    }
+
+    getVelocityData() {
+        return {
+            id: this.getId(),
+            type: 'velocity',
+            x: this.getVelocity().getX(),
+            y: this.getVelocity().getY()
+        }
+    }
+
+    getStyle() {
+        return this._style;
     }
 }
 

@@ -144,6 +144,11 @@ class Vector {
         return new Vector(this.getX(), this.getY());
     }
 
+    isEqual(vector) {
+        return this.getX() == vector.getX() &&
+            this.getY() == vector.getY();
+    }
+
     cartesian() {
         return {
             x: this.getX(),
@@ -167,4 +172,6 @@ class Vector {
     }
 }
 
-module.exports = Vector;
+if(typeof module != 'undefined'){
+    module.exports = Vector;
+}

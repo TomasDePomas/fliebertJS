@@ -19,6 +19,7 @@ class Storage {
         this.getCommandsRef()
             .on("child_added", function (snapshot) {
                 let row = snapshot.val();
+                console.log('Command received: '+ row.command);
                 this._commandCallbacks.forEach(function (callback) {
                     callback(row.command, row.data);
                 });
@@ -27,8 +28,13 @@ class Storage {
             }.bind(this));
     }
 
-    set(tick, data) {
-        this.getTicksRef().child(tick).set(data);
+    storeEvents(tick, eventData) {
+        this.getEventsRef().child(tick).set(eventData);
+        return this;
+    }
+
+    storeImprint(tick, imprintData) {
+        this.getImprintsRef().child(tick).set(imprintData);
         return this;
     }
 
@@ -38,7 +44,8 @@ class Storage {
     }
 
     clear() {
-        this.getTicksRef().set([]);
+        this.getEventsRef().set([]);
+        this.getImprintsRef().set([]);
         return this;
     }
 
@@ -50,8 +57,12 @@ class Storage {
         return this.getDatabase().ref('commands/');
     }
 
-    getTicksRef() {
-        return this.getDatabase().ref('ticks/');
+    getEventsRef() {
+        return this.getDatabase().ref('events/');
+    }
+
+    getImprintsRef() {
+        return this.getDatabase().ref('imprints/');
     }
 
     getStatusRef() {

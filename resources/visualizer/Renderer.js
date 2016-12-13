@@ -29,7 +29,8 @@ class Renderer {
         this._width = this.el.offsetWidth;
         this._height = this.el.offsetHeight;
         this._isDrawing = false;
-        this._currentFrame = 0;
+        this._currentFrame = -1;
+        this._activeObjects = [];
         this._visibleTick = 0;
         this._drawCallbacks = [];
     }
@@ -37,42 +38,54 @@ class Renderer {
     play() {
         this.setIsDrawing(true);
 
-        this.draw();
+        this.drawOnTick();
         return this;
     }
 
     stop() {
         this.setIsDrawing(false);
-        this.setLiveMode(false);
         return this;
     }
 
-    draw() {
-        if (this.getIsDrawing() || this.isLive()) {
-            requestAnimationFrame(this.draw.bind(this));
+    drawOnTick() {
+        if (this.getIsDrawing()) {
+            requestAnimationFrame(this.drawOnTick.bind(this));
         }
         const tick = this.getCurrentTick();
         const lastTick = this.getBuffer().getLastTick();
 
         if (tick > lastTick) {
-            if(!this.isLive()){
-                this.setIsDrawing(false);
-            }
-            return;
+            this.setIsDrawing(false);
+            return this;
         }
 
+        this.draw(tick);
+        this.incrementCurrentFrame();
+    }
+
+    draw(tick) {
         if (this.getVisibleTick() != tick) {
             this.clearScene();
 
-            const objects = this.getBuffer().get(tick);
+            const events = this.getBuffer().get(tick);
             const scene = this.getScene();
 
-            objects.forEach(function (object) {
-                scene.beginPath();
-                scene.arc(object.x, object.y, object.size, 0, 2 * Math.PI);
-                scene.fillStyle = 'black';
-                scene.fill();
-            });
+            events.forEach(function (event) {
+                let rendererObject = this._activeObjects.find(function (object) {
+                    return object.getId() == event.id;
+                });
+                if (!rendererObject) {
+                    rendererObject = new RendererObject(scene, event);
+                    this._activeObjects.push(rendererObject);
+                } else {
+                    rendererObject.processEvent(event);
+                }
+            }.bind(this));
+
+            for (let rendererObject of this._activeObjects) {
+                rendererObject.updatePosition(1);
+                rendererObject.draw();
+            }
 
             this.setVisibleTick(tick);
 
@@ -80,8 +93,6 @@ class Renderer {
                 callback(tick, this);
             }.bind(this));
         }
-
-        this.incrementCurrentFrame();
     }
 
     clearScene() {
@@ -89,22 +100,8 @@ class Renderer {
         return this;
     }
 
-    isLive() {
-        return this._properties.liveMode;
-    }
-
-    setLiveMode(status) {
-        this._properties.liveMode = status;
-        return this;
-    }
-
     onDraw(callback) {
         this._drawCallbacks.push(callback);
-        return this;
-    }
-
-    clearOnDraw() {
-        this._drawCallbacks = [];
         return this;
     }
 
@@ -148,10 +145,6 @@ class Renderer {
     }
 
     getCurrentTick() {
-        if (this.isLive()) {
-            return this.getBuffer().getLastTick();
-        }
-
         return Math.floor(this.getCurrentFrame() / this.getTickRate());
     }
 

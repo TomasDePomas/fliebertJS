@@ -16,7 +16,7 @@ class World {
         this._properties = Object.assign({
             width: 500,
             height: 500,
-            wraps: false
+            bounces: false
         }, properties);
 
         this._grid = new Grid({
@@ -34,47 +34,54 @@ class World {
         return this;
     }
 
-    flipObject(object) {
-        if (object.getX() > this.getWidth()) {
-            object.setX(0);
+    bounceObject(object) {
+        let velocity = object.getVelocity();
+
+        if (object.getX() >= this.getWidth() || object.getX() <= 0) {
+            velocity.setX(velocity.getX() * -1);
         }
-        if (object.getX() < 0) {
-            object.setX(this.getWidth());
-        }
-        if (object.getY() > this.getHeight()) {
-            object.setY(0);
-        }
-        if (object.getY() < 0) {
-            object.setY(this.getHeight());
+        if (object.getY() >= this.getHeight() || object.getY() <= 0) {
+            velocity.setY(velocity.getY() * -1);
         }
 
+        object.setVelocity(velocity);
         return this;
     }
 
     advance(speed) {
-        const bufferData = [];
+        let eventData = [];
 
-        if(this._objects.length == 0){
+        if (this._objects.length == 0) {
             console.log('Warning: There are no objects in your world. No simulation will take place.');
         }
 
         this._objects.forEach(function (object) {
             object.advance(speed);
 
-            if (this._properties.wraps) {
-                this.flipObject(object);
+            if (this._properties.bounces) {
+                this.bounceObject(object);
             }
             this.getGrid().update(object);
 
-            bufferData.push(object.getBufferData());
+            if (object.hasChanged()) {
+                eventData.push(object.getVelocityData());
+            }
         }.bind(this));
 
-        return bufferData;
+        return eventData;
     }
 
     toggleWraps() {
-        this._properties.wraps = !this._properties.wraps;
+        this._properties.bounces = !this._properties.bounces;
         return this;
+    }
+
+    getImprint() {
+        let imprint = [];
+        this._objects.forEach(function (object) {
+            imprint.push(object.getImprint());
+        });
+        return imprint;
     }
 
     getWidth() {

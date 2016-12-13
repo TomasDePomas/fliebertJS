@@ -26,5 +26,10 @@ This library runs a node server that simulates elements in your world and stores
 
 __Optional__
 
-1. create a vhost called mobs.dev and point it to the `app/index.html`
+1. create a vhost called `fliebert.js` and point it to the `app/index.html`
 2. instead of `gulp` run `gulp watch`. This wil automatically update the script when you make changes. You know, in case you want to mess around with stuff.
+
+# FAQ
+
+__When I run the script I get `simulation.js:533 Uncaught ReferenceError: module is not defined`__
+This is by design, not because I don't want to figure out modules for frontend javascript. No worries, nothing is broken. 

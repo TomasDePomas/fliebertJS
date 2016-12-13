@@ -136,4 +136,6 @@ class Grid {
     }
 }
 
-module.exports = Grid;
+if(typeof module != 'undefined'){
+    module.exports = Grid;
+}

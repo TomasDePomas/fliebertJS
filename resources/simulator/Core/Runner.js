@@ -14,15 +14,18 @@ const STATUS_STOPPED = 3;
 const STATUS_FINISHED = 4;
 
 class Runner {
-    constructor(storage, properties) {
+    constructor(storage, properties, finishedCallback) {
         this._currentTick = 0;
         this._tickCallbacks = [];
         this._targetTick = false;
         this._world = null;
         this._storage = storage;
+        this.callback = finishedCallback;
 
         this._properties = Object.assign({
-            speed: 1  // Step the simulation takes per tick in seconds
+            speed: 1,  // Step the simulation takes per tick in seconds
+            tickBreak: 0,  // add a timeout between render ticks, to slow down the simulation. Needed for life mode
+            imprintInterval: 1000
         }, properties);
 
         if (storage) {
@@ -57,20 +60,28 @@ class Runner {
     }
 
     tick() {
-        const storageData = this.getWorld().advance(this.getSpeed());
+        const eventData = this.getWorld().advance(this.getSpeed());
 
         this._tickCallbacks.forEach(function (callback) {
-            callback(this.getSpeed(), this);
+            callback(this.getSpeed(), this, this._currentTick);
         }.bind(this));
 
-        this.saveToStorage(storageData);
+        this.saveEventsToStorage(eventData);
+
+        if (this.getCurrentTick() % this.getImprintInterval() == 0) {
+            this.saveImprintToStorage(this.getWorld().getImprint());
+        }
 
         this._currentTick++;
 
         if (this.isContinuous() || this._currentTick < this._targetTick) {
-            setTimeout(this.tick.bind(this), 0);
+            setTimeout(this.tick.bind(this), this._properties.tickBreak);
         } else {
+            this.saveImprintToStorage(this.getWorld().getImprint());
             this.updateStatus(STATUS_FINISHED);
+            if(this.callback){
+                this.callback();
+            }
         }
 
         return this;
@@ -86,10 +97,17 @@ class Runner {
         return this;
     }
 
-    saveToStorage(data) {
-        this.getStorage().set(
+    saveEventsToStorage(eventData) {
+        this.getStorage().storeEvents(
             this.getCurrentTick() * this.getSpeed()
-            , data
+            , eventData
+        )
+    }
+
+    saveImprintToStorage(imprint) {
+        this.getStorage().storeImprint(
+            this.getCurrentTick() * this.getSpeed()
+            , imprint
         )
     }
 
@@ -171,6 +189,10 @@ class Runner {
 
     getCurrentTick() {
         return this._currentTick;
+    }
+
+    getImprintInterval() {
+        return this._properties.imprintInterval;
     }
 }
 

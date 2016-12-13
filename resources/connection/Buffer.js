@@ -11,11 +11,19 @@ class Buffer {
 
         firebase.initializeApp(firebaseConfig);
         this._database = firebase.database();
-        this._buffer = [];
+        this._events = [];
         this._statusChangeCallbacks = [];
+        this._newEventCallbacks = [];
 
-        this.getTicksRef()
+        this.getEventsRef()
             .on("child_added", function (snapshot) {
+                console.log('hit 0');
+                this._set(snapshot.key, snapshot.val());
+            }.bind(this));
+
+        this.getImprintsRef()
+            .on("child_added", function (snapshot) {
+                console.log('hit 0');
                 this._set(snapshot.key, snapshot.val());
             }.bind(this));
 
@@ -35,20 +43,24 @@ class Buffer {
     }
 
     _set(stamp, data) {
-        this._buffer[stamp] = data;
+        this._events[stamp] = data;
+        this._newEventCallbacks.forEach(function(callback){
+            console.log('hit 1');
+            callback(stamp, data);
+        });
         return this;
     }
 
     get(stamp) {
-        return this._buffer[stamp] || [];
+        return this._events[stamp] || [];
     }
 
     getLastTick() {
-        return this._buffer.length - 1;
+        return this._events.length - 1;
     }
 
     clear(){
-        this._buffer = [];
+        this._events = [];
         return this;
     }
 
@@ -60,8 +72,12 @@ class Buffer {
         return this.getDatabase().ref('commands/');
     }
 
-    getTicksRef() {
-        return this.getDatabase().ref('ticks/');
+    getEventsRef() {
+        return this.getDatabase().ref('events/');
+    }
+
+    getImprintsRef() {
+        return this.getDatabase().ref('imprints/');
     }
 
     getStatusRef() {
@@ -71,8 +87,8 @@ class Buffer {
         this._statusChangeCallbacks.push(callback);
         return this;
     }
-    clearOnStatusChange(){
-        this._statusChangeCallbacks = [];
+    onNewEvent(callback){
+        this._newEventCallbacks.push(callback);
         return this;
     }
 }

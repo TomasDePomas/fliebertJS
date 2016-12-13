@@ -8,7 +8,7 @@
         <title>FliebertJS</title>
     </head>
     <body>
-        <script src="http://mobs.dev:35729/livereload.js?snipver=1"></script>
+        <script src="http://fliebert.js:35729/livereload.js?snipver=1"></script>
 
         <canvas id="world"
                 width="500"
@@ -20,27 +20,29 @@
 
             const renderer = new Renderer('#world', buffer);
         </script>
-        <div>Showing: <strong id="currentTick">0</strong> / <strong id="bufferSize">0</strong></div>
+        <div>Showing: <strong id="currentTick">0</strong> / <strong id="lastTick">0</strong></div>
         <div><strong id="serverStatus">Connecting..</strong></div>
-
+        <div>Events in buffer:<strong id="bufferSize">0</strong></div>
+        <br>
         <script>
-            const bufferDisplay = document.getElementById('bufferSize');
+            const bufferSize = document.getElementById('bufferSize');
+            const lastTick = document.getElementById('lastTick');
             const tickDisplay = document.getElementById('currentTick');
             const statusDisplay = document.getElementById('serverStatus');
 
             buffer.onStatusChange(function (status) {
-                console.log(status);
                 statusDisplay.innerText = status.text;
-                bufferDisplay.innerText = buffer.getLastTick();
+                lastTick.innerText = buffer.getLastTick();
+                bufferSize.innerText = buffer._events.filter(function(value) { return value !== undefined }).length;
             });
 
             renderer.onDraw(function (tick) {
                 tickDisplay.innerText = tick;
             });
 
-            renderer.el.onmousedown = function (e) {
-                buffer.sendCommand('attract', {x: e.offsetX, y: e.offsetY});
-            };
+//            renderer.el.onmousedown = function (e) {
+//                buffer.sendCommand('attract', {x: e.offsetX, y: e.offsetY});
+//            };
 
             function play() {
                 renderer.play();
@@ -89,27 +91,14 @@
                 );
                 renderer.draw();
             }
-            //            function startLiveMode() {
-            //            }
-            //            function stopLiveMode() {
-            //            }
         </script>
-
-
-        <div>
-            <button onclick="buffer.sendCommand('simulate', {amount: 10})">Simulate 10</button>
-            <button onclick="buffer.sendCommand('simulate', {amount: 100})">Simulate 100</button>
-            <button onclick="buffer.sendCommand('simulate', {amount: 1000})">Simulate 1000</button>
-
-            <button onclick="buffer.sendCommand('simulate', {amount: false})">Continuous</button>
-            <button onclick="buffer.sendCommand('stop')">Stop</button>
-        </div>
 
         <div>
             <button onclick="firstFrame()">|<<</button>
             <button onclick="previousFrame()"><</button>
             <button onclick="play()">play</button>
             <button onclick="pause()">pause</button>
+            <button onclick="resume()">pause</button>
             <button onclick="stop()">stop</button>
             <button onclick="nextFrame()">></button>
             <button onclick="lastFrame()">>>|</button>
